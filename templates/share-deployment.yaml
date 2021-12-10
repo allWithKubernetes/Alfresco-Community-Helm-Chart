@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: {{ .Chart.Name }}-share
+    chart: {{ .Chart.Name }}
+    release: {{ .Release.Name }}
+  name: {{ .Chart.Name }}-share
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Chart.Name }}-share
+      chart: {{ .Chart.Name }}
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Chart.Name }}-share
+        chart: {{ .Chart.Name }}
+        release: {{ .Release.Name }}
+    spec:
+      containers:
+        - env:
+            - name: JAVA_OPTS
+              value: ' -XX:MinRAMPercentage=50 -XX:MaxRAMPercentage=80 -Dalfresco.host=localhost -Dalfresco.port=8080 -Dalfresco.context=alfresco -Dalfresco.protocol=http '
+            - name: REPO_HOST
+              value: alfresco
+            - name: REPO_PORT
+              value: "8080"
+          image: {{ .Values.share.image.repository }}:{{ .Values.share.image.tag }}
+          name: {{ .Release.Name }}-share
+          ports:
+            - containerPort: {{ .Values.share.image.internalPort }}
+      restartPolicy: {{ .Values.share.restartPolicy }}
+

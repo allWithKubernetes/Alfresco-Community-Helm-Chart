@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: {{ .Chart.Name }}-postgres
+    chart: {{ .Chart.Name }}
+    release: {{ .Release.Name }}
+  name: {{ .Chart.Name }}-postgres
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Chart.Name }}-postgres
+      chart: {{ .Chart.Name }}
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Chart.Name }}-postgres
+        chart: {{ .Chart.Name }}
+        release: {{ .Release.Name }}
+    spec:
+      containers:
+        - args:
+            - postgres
+            - -c
+            - max_connections=300
+            - -c
+            - log_min_messages=LOG
+          env:
+            - name: POSTGRES_DB
+              value: alfresco
+            - name: POSTGRES_PASSWORD
+              value: alfresco
+            - name: POSTGRES_USER
+              value: alfresco
+          image: {{ .Values.postgres.image.repository }}:{{ .Values.postgres.image.tag }}
+          name: {{ .Release.Name }}-postgres
+          ports:
+            - containerPort: {{ .Values.postgres.image.internalPort }}
+      restartPolicy: {{ .Values.postgres.restartPolicy }}
+

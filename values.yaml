@@ -1,0 +1,76 @@
+# Default values for alfresco-7-community.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+repository:
+  restartPolicy: Always
+  image: 
+    repository: alfresco/alfresco-content-repository-community
+    tag: "7.2.0-M1"
+    internalPort: 8080
+  service:
+    type: ClusterIP
+    name: share-svc
+    externalPort: 80
+    protocol: TCP
+
+share:
+  restartPolicy: Always
+  image: 
+    repository: alfresco/alfresco-share
+    tag: "7.2.0-M1"
+    internalPort: 8080
+  service:
+    type: ClusterIP
+    name: share-svc
+    externalPort: 80
+    protocol: TCP
+
+activemq:
+  restartPolicy: Always
+  image: 
+    repository: alfresco/alfresco-activemq
+    tag: "5.16.1"
+    internalPort: 61616
+  service:
+    type: ClusterIP
+    name: activemq-svc
+    externalPort: 80
+    protocol: TCP
+
+postgres:
+  restartPolicy: Always
+  image:
+    repository: postgres
+    tag: "13.3"
+    internalPort: 5432
+  service:
+    type: ClusterIP
+    name: postgres-svc
+    externalPort: 80
+    protocol: TCP
+
+solr:
+  restartPolicy: Always
+  image:
+    repository: alfresco/alfresco-search-services
+    tag: "2.0.2"
+    internalPort: 8983
+  service:
+    type: ClusterIP
+    name: solr-svc
+    externalPort: 80
+    protocol: TCP
+
+transformCoreAio:
+  restartPolicy: Always
+  image:
+    repository: alfresco/alfresco-transform-core-aio
+    tag: "2.5.3"
+    internalPort: 8090
+  service:
+    type: ClusterIP
+    name: transform-core-aio-svc
+    externalPort: 80
+    protocol: TCP  
+

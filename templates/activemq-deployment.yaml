@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: {{ .Chart.Name }}-activemq
+    chart: {{ .Chart.Name }}
+    release: {{ .Release.Name }}
+  name: {{ .Chart.Name }}-activemq
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Chart.Name }}-activemq
+      chart: {{ .Chart.Name }}
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Chart.Name }}-activemq
+        chart: {{ .Chart.Name }}
+        release: {{ .Release.Name }}
+    spec:
+      containers:
+        - image: "{{ .Values.activemq.image.repository }}:{{ .Values.activemq.image.tag }}"
+          name: {{ .Release.Name }}-activemq
+          ports:
+            - containerPort: {{ .Values.activemq.image.internalPort }}
+      restartPolicy: {{ .Values.activemq.restartPolicy }}
+
+

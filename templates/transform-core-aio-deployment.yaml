@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: {{ .Chart.Name }}-transform-core-aio
+    chart: {{ .Chart.Name }}
+    release: {{ .Release.Name }}
+  name: {{ .Chart.Name }}-transform-core-aio
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Chart.Name }}-transform-core-aio
+      chart: {{ .Chart.Name }}
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Chart.Name }}-transform-core-aio
+        chart: {{ .Chart.Name }}
+        release: {{ .Release.Name }}
+    spec:
+      containers:
+        - env:
+            - name: JAVA_OPTS
+              value: ' -XX:MinRAMPercentage=50 -XX:MaxRAMPercentage=80'
+          image: {{ .Values.transformCoreAio.image.repository }}:{{ .Values.transformCoreAio.image.tag }}
+          name: {{ .Release.Name }}-transform-core-aio
+          ports:
+            - containerPort: {{ .Values.transformCoreAio.image.internalPort }}

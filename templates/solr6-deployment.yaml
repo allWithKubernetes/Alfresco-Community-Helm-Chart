@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: {{ .Chart.Name }}-solr
+    chart: {{ .Chart.Name }}
+    release: {{ .Release.Name }}
+  name: {{ .Chart.Name }}-solr
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Chart.Name }}-solr
+      chart: {{ .Chart.Name }}
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Chart.Name }}-solr
+        chart: {{ .Chart.Name }}
+        release: {{ .Release.Name }}
+    spec:
+      containers:
+        - env:
+            - name: ALFRESCO_SECURE_COMMS
+              value: none
+            - name: SOLR_ALFRESCO_HOST
+              value: alfresco
+            - name: SOLR_ALFRESCO_PORT
+              value: "8080"
+            - name: SOLR_CREATE_ALFRESCO_DEFAULTS
+              value: alfresco,archive
+            - name: SOLR_SOLR_HOST
+              value: {{ .Values.solr.service.name }}
+            - name: SOLR_SOLR_PORT
+              value: "8983"
+          image: {{ .Values.solr.image.repository }}:{{ .Values.solr.image.tag }}
+          name: {{ .Release.Name }}-solr6
+          ports:
+            - containerPort: {{ .Values.postgres.image.internalPort }}
+

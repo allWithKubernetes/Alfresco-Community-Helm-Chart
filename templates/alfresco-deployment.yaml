@@ -1,0 +1,69 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: {{ .Chart.Name }}-repository
+    chart: {{ .Chart.Name }}
+    release: {{ .Release.Name }}
+  name: {{ .Chart.Name }}-repository
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Chart.Name }}-repository
+      chart: {{ .Chart.Name }}
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Chart.Name }}-repository
+        chart: {{ .Chart.Name }}
+        release: {{ .Release.Name }}
+    spec:
+      containers:
+        - env:
+            - name: JAVA_OPTS
+              value: ' 
+                -Ddb.driver=org.postgresql.Driver 
+                -Ddb.username=alfresco 
+                -Ddb.password=alfresco 
+                -Ddb.url=jdbc:postgresql://{{ .Values.postgres.service.name }}:{{ .Values.postgres.service.externalPort}}/alfresco 
+                -Dsolr.host={{ .Values.solr.service.name }} 
+                -Dsolr.port={{ .Values.solr.service.externalPort}}
+                -Dsolr.http.connection.timeout=1000 
+                -Dsolr.secureComms=none 
+                -Dsolr.base.url=/solr 
+                -Dindex.subsystem.name=solr6 
+                -Dshare.host={{ .Values.share.service.name }} 
+                -Dshare.port={{ .Values.share.service.externalPort}} 
+                -Dalfresco.host=localhost 
+                -Dalfresco.port=8080 
+                -Daos.baseUrlOverwrite=http://localhost:8080/alfresco/aos 
+                -Dmessaging.broker.url="failover:(nio://{{ .Values.activemq.service.name }}:{{ .Values.activemq.service.externalPort}})?timeout=3000&jms.useCompression=true" 
+                -Ddeployment.method=DOCKER_COMPOSE 
+                -DlocalTransform.core-aio.url=http://{{ .Values.transformCoreAio.service.name }}:{{ .Values.transformCoreAio.service.externalPort}}/ 
+                -Dcsrf.filter.enabled=false 
+                -XX:MinRAMPercentage=50 
+                -XX:MaxRAMPercentage=80 '
+            - name: JAVA_TOOL_OPTIONS
+              value: ' -Dencryption.keystore.type=JCEKS 
+                -Dencryption.cipherAlgorithm=DESede/CBC/PKCS5Padding 
+                -Dencryption.keyAlgorithm=DESede 
+                -Dencryption.keystore.location=/usr/local/tomcat/shared/classes/alfresco/extension/keystore/keystore 
+                -Dmetadata-keystore.password=mp6yc0UD9e 
+                -Dmetadata-keystore.aliases=metadata 
+                -Dmetadata-keystore.metadata.password=oKIWzVdEdA 
+                -Dmetadata-keystore.metadata.algorithm=DESede '
+          image: "{{ .Values.repository.image.repository }}:{{ .Values.repository.image.tag }}"
+          name: {{ .Release.Name }}-repository
+          ports:
+            - containerPort: {{ .Values.repository.image.internalPort }}
+          volumeMounts:
+            - mountPath: /usr/local/tomcat/alf_data
+              name: alfresco-data
+      restartPolicy: {{ .Values.repository.restartPolicy }}
+      volumes:
+        - name: alfresco-data
+          persistentVolumeClaim:
+            claimName: alfresco-data
+
