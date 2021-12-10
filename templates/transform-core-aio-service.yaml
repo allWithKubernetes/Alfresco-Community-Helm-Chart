@@ -3,7 +3,7 @@ kind: Service
 metadata:
   name: {{ .Values.transformCoreAio.service.name }}
 spec:
-  type: {{ .Values.activemq.service.type }}
+  type: {{ .Values.transformCoreAio.service.type }}
   selector:
     app: {{ .Chart.Name }}-transform-core-aio
     chart: {{ .Chart.Name }}

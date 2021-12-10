@@ -36,8 +36,8 @@ spec:
                 -Dindex.subsystem.name=solr6 
                 -Dshare.host={{ .Values.share.service.name }} 
                 -Dshare.port={{ .Values.share.service.externalPort}} 
-                -Dalfresco.host=localhost 
-                -Dalfresco.port=8080 
+                -Dalfresco.host={{ .Values.repository.service.name }} 
+                -Dalfresco.port={{ .Values.repository.image.internalPort }} 
                 -Daos.baseUrlOverwrite=http://localhost:8080/alfresco/aos 
                 -Dmessaging.broker.url="failover:(nio://{{ .Values.activemq.service.name }}:{{ .Values.activemq.service.externalPort}})?timeout=3000&jms.useCompression=true" 
                 -Ddeployment.method=DOCKER_COMPOSE 

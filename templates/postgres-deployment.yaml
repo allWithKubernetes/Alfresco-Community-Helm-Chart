@@ -38,5 +38,12 @@ spec:
           name: {{ .Release.Name }}-postgres
           ports:
             - containerPort: {{ .Values.postgres.image.internalPort }}
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: postgres-data
       restartPolicy: {{ .Values.postgres.restartPolicy }}
+      volumes:
+        - name: postgres-data
+          persistentVolumeClaim:
+            claimName: postgres-data
 

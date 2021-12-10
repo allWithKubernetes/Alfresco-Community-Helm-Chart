@@ -25,17 +25,25 @@ spec:
             - name: ALFRESCO_SECURE_COMMS
               value: none
             - name: SOLR_ALFRESCO_HOST
-              value: alfresco
+              value: {{ .Values.repository.service.name }}
             - name: SOLR_ALFRESCO_PORT
-              value: "8080"
+              value: "{{ .Values.repository.service.externalPort }}"
             - name: SOLR_CREATE_ALFRESCO_DEFAULTS
               value: alfresco,archive
             - name: SOLR_SOLR_HOST
               value: {{ .Values.solr.service.name }}
             - name: SOLR_SOLR_PORT
-              value: "8983"
+              value: "{{ .Values.solr.image.internalPort }}"
           image: {{ .Values.solr.image.repository }}:{{ .Values.solr.image.tag }}
           name: {{ .Release.Name }}-solr6
           ports:
             - containerPort: {{ .Values.postgres.image.internalPort }}
+          volumeMounts:
+            - mountPath: /opt/alfresco-search-services/data
+              name: solr-data
+      restartPolicy: {{ .Values.solr.restartPolicy }}
+      volumes:
+        - name: solr-data
+          persistentVolumeClaim:
+            claimName: solr-data
 

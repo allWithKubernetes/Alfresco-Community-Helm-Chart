@@ -10,7 +10,7 @@ repository:
     internalPort: 8080
   service:
     type: ClusterIP
-    name: share-svc
+    name: repository-svc
     externalPort: 80
     protocol: TCP
 
@@ -21,7 +21,7 @@ share:
     tag: "7.2.0-M1"
     internalPort: 8080
   service:
-    type: ClusterIP
+    type: NodePort
     name: share-svc
     externalPort: 80
     protocol: TCP

@@ -3,6 +3,7 @@ kind: Service
 metadata:
   name: {{ .Values.solr.service.name }}
 spec:
+  type: {{ .Values.solr.service.type }}
   selector:
     app: {{ .Chart.Name }}-solr
     chart: {{ .Chart.Name }}

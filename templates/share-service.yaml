@@ -3,6 +3,7 @@ kind: Service
 metadata:
   name: {{ .Values.share.service.name }}
 spec:
+  type: {{ .Values.share.service.type }}
   selector:
     app: {{ .Chart.Name }}-share
     chart: {{ .Chart.Name }}
