@@ -54,6 +54,16 @@ activemq:
     name: activemq-svc
     externalPort: 80
     protocol: TCP
+  readinessProbe:
+    initialDelaySeconds: 60
+    periodSeconds: 20
+    timeoutSeconds: 10
+    failureThreshold: 6
+  livenessProbe:
+    initialDelaySeconds: 130
+    periodSeconds: 20
+    timeoutSeconds: 10
+    failureThreshold: 1
 
 postgres:
   restartPolicy: Always
