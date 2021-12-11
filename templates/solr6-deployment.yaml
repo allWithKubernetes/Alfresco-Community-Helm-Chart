@@ -21,19 +21,9 @@ spec:
         release: {{ .Release.Name }}
     spec:
       containers:
-        - env:
-            - name: ALFRESCO_SECURE_COMMS
-              value: none
-            - name: SOLR_ALFRESCO_HOST
-              value: {{ .Values.repository.service.name }}
-            - name: SOLR_ALFRESCO_PORT
-              value: "{{ .Values.repository.service.externalPort }}"
-            - name: SOLR_CREATE_ALFRESCO_DEFAULTS
-              value: alfresco,archive
-            - name: SOLR_SOLR_HOST
-              value: {{ .Values.solr.service.name }}
-            - name: SOLR_SOLR_PORT
-              value: "{{ .Values.solr.image.internalPort }}"
+        - envFrom:
+            - configMapRef:
+                name: {{ .Chart.Name }}-solr-configmap
           image: {{ .Values.solr.image.repository }}:{{ .Values.solr.image.tag }}
           name: {{ .Release.Name }}-solr6
           ports:

@@ -21,19 +21,9 @@ spec:
         release: {{ .Release.Name }}
     spec:
       containers:
-        - env:
-            - name: JAVA_OPTS
-              value: ' 
-                -XX:MinRAMPercentage=50 
-                -XX:MaxRAMPercentage=80 
-                -Dalfresco.host={{ .Values.repository.service.name }} 
-                -Dalfresco.port={{ .Values.repository.service.externalPort }}
-                -Dalfresco.context=alfresco 
-                -Dalfresco.protocol=http '
-            - name: REPO_HOST
-              value: {{ .Values.repository.service.name }}
-            - name: REPO_PORT
-              value: "{{ .Values.repository.service.externalPort }}"
+        - envFrom:
+          - configMapRef:
+                name: {{ .Chart.Name }}-share-configmap
           image: {{ .Values.share.image.repository }}:{{ .Values.share.image.tag }}
           name: {{ .Release.Name }}-share
           ports:

@@ -27,13 +27,9 @@ spec:
             - max_connections=300
             - -c
             - log_min_messages=LOG
-          env:
-            - name: POSTGRES_DB
-              value: alfresco
-            - name: POSTGRES_PASSWORD
-              value: alfresco
-            - name: POSTGRES_USER
-              value: alfresco
+          envFrom:
+            - configMapRef:
+                name: {{ .Chart.Name }}-postgres-configmap
           image: {{ .Values.postgres.image.repository }}:{{ .Values.postgres.image.tag }}
           name: {{ .Release.Name }}-postgres
           ports:
@@ -41,6 +37,29 @@ spec:
           volumeMounts:
             - mountPath: /var/lib/postgresql/data
               name: postgres-data
+          livenessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - exec pg_isready -U {{ .Values.postgres.config.user }} -d "dbname={{ .Values.postgres.config.db }}" -h 127.0.0.1 -p {{ .Values.postgres.image.internalPort }}
+            initialDelaySeconds: {{ .Values.postgres.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.postgres.livenessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.postgres.livenessProbe.timeoutSeconds }}
+            successThreshold: {{ .Values.postgres.livenessProbe.successThreshold }}
+            failureThreshold: {{ .Values.postgres.livenessProbe.failureThreshold }}
+          readinessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - -e
+                - exec pg_isready -U {{ .Values.postgres.config.user }} -d "dbname={{ .Values.postgres.config.db }}" -h 127.0.0.1 -p {{ .Values.postgres.image.internalPort }}
+            initialDelaySeconds: {{ .Values.postgres.readinessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.postgres.readinessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.postgres.readinessProbe.timeoutSeconds }}
+            successThreshold: {{ .Values.postgres.readinessProbe.successThreshold }}
+            failureThreshold: {{ .Values.postgres.readinessProbe.failureThreshold }}
       restartPolicy: {{ .Values.postgres.restartPolicy }}
       volumes:
         - name: postgres-data

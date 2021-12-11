@@ -4,6 +4,12 @@
 
 repository:
   restartPolicy: Always
+  environment:
+    JAVA_OPTS: "
+      -Dcsrf.filter.enabled=false 
+      -XX:MinRAMPercentage=50 
+      -XX:MaxRAMPercentage=80
+      "
   image: 
     repository: alfresco/alfresco-content-repository-community
     tag: "7.2.0-M1"
@@ -67,6 +73,10 @@ activemq:
 
 postgres:
   restartPolicy: Always
+  config: 
+    user: alfresco
+    password: alfresco
+    db: alfresco
   image:
     repository: postgres
     tag: "13.3"
@@ -76,9 +86,24 @@ postgres:
     name: postgres-svc
     externalPort: 80
     protocol: TCP
+  livenessProbe:
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 6
+    successThreshold: 1
+  readinessProbe:
+    initialDelaySeconds: 5
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 6
+    successThreshold: 1
 
 solr:
   restartPolicy: Always
+  config:
+    comms: none
+    createCore: alfresco,archive
   image:
     repository: alfresco/alfresco-search-services
     tag: "2.0.2"
